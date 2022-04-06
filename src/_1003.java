@@ -1,6 +1,6 @@
 import java.util.Scanner;
 public class _1003 {
-    public static void main(String[] args){
+    public static void main(String args[]){
         int[] fibo = new int[41];
         fibo[0]=0; fibo[1]=1;
         for(int i=2; i<41; i++){
