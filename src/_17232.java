@@ -4,19 +4,23 @@ import java.util.*;
 public class _17232 {
     public static void main(String[] args) throws IOException {
         Input();
-        //test_print();
+        //PrintBool();
+        //Print();
         for(int i=0; i<T; i++){
             for(int r=0; r<N; r++){
                 for(int c=0; c<M; c++){
-                    Observe(r,c);
+                    if(canChange[r][c]) Observe(r,c);
                 }
             }
+            canChange = new boolean[N][M];
             Apply();
-//            test_print();
-//            System.out.println();
+            //Print();
+            //PrintBool();
+            //System.out.println();
         }
-        test_print();
+        Print();
     }
+    static boolean[][] canChange; // 값이 변할 경우 그 주변 칸은 다음 차례에 값이 변할 수 있음
     static int N,M,T,K,a,b;
     static char[][] Map;
     public static void Input() throws IOException {
@@ -26,6 +30,7 @@ public class _17232 {
         M = Integer.parseInt(st.nextToken());
         T = Integer.parseInt(st.nextToken());
         Map = new char[N][M];
+        canChange = new boolean[N][M];
         st = new StringTokenizer(br.readLine());
         K = Integer.parseInt(st.nextToken());
         a = Integer.parseInt(st.nextToken());
@@ -34,6 +39,7 @@ public class _17232 {
             String str = br.readLine();
             for(int c=0; c<M; c++){
                 Map[r][c] = str.charAt(c);
+                canChange[r][c] = true;
             }
         }
     }
@@ -74,13 +80,26 @@ public class _17232 {
         }
     }
     public static void Apply(){
-        while(!qr.isEmpty())
-            Map[qr.poll()][qc.poll()] = ql.poll().charAt(0);
+        while(!qr.isEmpty()){
+            int r = qr.poll();
+            int c = qc.poll();
+            Map[r][c] = ql.poll().charAt(0);
+            //System.out.println(r+""+c);
+            for(int i=r-K; i<=r+K; i++){
+                if(i>=0 && i<N){
+                    for(int j=c-K; j<=c+K; j++){
+                        if(j>=0 && j<M) {
+                            canChange[i][j] = true;
+                        }
+                    }
+                }
+            }
+        }
     }
     public static Queue<Integer> qr = new ArrayDeque<>();   // r값을 저장하는 큐
     public static Queue<Integer> qc = new ArrayDeque<>();   // c값을 저장하는 큐
     public static Queue<String> ql = new ArrayDeque<>();   // Map[r][c]값을 저장하는 큐
-    public static void test_print(){
+    public static void Print(){
         //System.out.println();
         for(int r=0; r<N; r++){
             for(int c=0; c<M; c++){
@@ -89,5 +108,13 @@ public class _17232 {
             System.out.println();
         }
     }
+    public static void PrintBool(){
+        //System.out.println();
+        for(int r=0; r<N; r++){
+            for(int c=0; c<M; c++){
+                System.out.print(canChange[r][c]?'T':'-');
+            }
+            System.out.println();
+        }
+    }
 }
-//53%시간초과
