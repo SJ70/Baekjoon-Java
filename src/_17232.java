@@ -2,119 +2,119 @@ import java.io.*;
 import java.util.*;
 
 public class _17232 {
-    public static void main(String[] args) throws IOException {
-        Input();
-        //PrintBool();
-        //Print();
-        for(int i=0; i<T; i++){
-            for(int r=0; r<N; r++){
-                for(int c=0; c<M; c++){
-                    if(canChange[r][c]) Observe(r,c);
-                }
-            }
-            canChange = new boolean[N][M];
-            Apply();
-            //Print();
-            //PrintBool();
-            //System.out.println();
+    public static void main(String[] args) throws IOException{
+        Init();
+        for(int i=0; i<TIME; i++){
+            SetCumulativeSum();
+//            Print(CumulativeSum_Row);
+//            Print(CumulativeSum);
+//            Print(Map);
+            Observe();
+            ApplyChange();
         }
-        Print();
+        Print(Map);
     }
-    static boolean[][] canChange; // 값이 변할 경우 그 주변 칸은 다음 차례에 값이 변할 수 있음
-    static int N,M,T,K,a,b;
-    static char[][] Map;
-    public static void Input() throws IOException {
+    static int R,C,TIME,RANGE,A,B;
+    static boolean[][] Map;
+    static int[][] CumulativeSum_Row,CumulativeSum;
+    public static void Init() throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-        T = Integer.parseInt(st.nextToken());
-        Map = new char[N][M];
-        canChange = new boolean[N][M];
+        R = Integer.parseInt(st.nextToken());
+        C = Integer.parseInt(st.nextToken());
+        TIME = Integer.parseInt(st.nextToken());
+
         st = new StringTokenizer(br.readLine());
-        K = Integer.parseInt(st.nextToken());
-        a = Integer.parseInt(st.nextToken());
-        b = Integer.parseInt(st.nextToken());
-        for(int r=0; r<N; r++){
+        RANGE = Integer.parseInt(st.nextToken());
+        A = Integer.parseInt(st.nextToken());
+        B = Integer.parseInt(st.nextToken());
+
+        Map = new boolean[R][C];
+        for(int r=0; r<R; r++){
             String str = br.readLine();
-            for(int c=0; c<M; c++){
-                Map[r][c] = str.charAt(c);
-                canChange[r][c] = true;
+            for(int c=0; c<C; c++){
+                Map[r][c] = str.charAt(c)=='*';
             }
         }
     }
-    public static boolean hasLife(int r, int c){
-        //System.out.println(r+" "+c+" "+(( r>=0 && r<N && c>=0 && c<M && Map[r][c]=='*')?"true":"false"));
-        return ( r>=0 && r<N && c>=0 && c<M && Map[r][c]=='*');
-    }
-    public static int cntNearbyLives(int r, int c){
-        int cnt = 0;
-        int r1 = Math.max(0, r-K);
-        int r2 = Math.min(N-1, r+K);
-        int c1 = Math.max(0, c-K);
-        int c2 = Math.min(M-1, c+K);
-        for(int i=r1; i<=r2; i++)
-            for(int j=c1; j<=c2; j++)
-                if( i!=r || j!=c ){ // 주변만 세므로 제자리는 제외
-                    cnt += hasLife(i,j) ? 1 : 0 ;
-                    if(cnt>b) return cnt; // b를 초과할 경우 더 셀 필요 x
+    public static void SetCumulativeSum(){
+        CumulativeSum_Row = new int[R][C];
+        for(int r=0; r<R; r++){
+            for(int c=0; c<=RANGE; c++){
+                if(c>=C) continue;
+                CumulativeSum_Row[r][0] += Map[r][c] ? 1 : 0;
+            }
+            for(int c=1; c<C; c++){
+                CumulativeSum_Row[r][c] = CumulativeSum_Row[r][c-1];
+                if(c+RANGE < C) {
+                    CumulativeSum_Row[r][c] += (Map[r][c+RANGE] ? 1 : 0);
                 }
-//        System.out.printf("%2d ,%2d (%2d,%2d ~%2d,%2d ) : %d\n",r,c,r-K,c-K,r+K,c+K,cnt);
-        return cnt;
-    }
-    public static void Observe(int r, int c){
-        int Nearby = cntNearbyLives(r,c);
-        // 1.생존 : 만약 현재 칸에 생명이 있고, 주위에 a개 이상 b개 이하의 생명이 있다면 현재 칸의 생명은 다음 단계에 살아남는다.
-        // 2.고독 : 만약 현재 칸에 생명이 있고, 주위에 a개 미만의 생명이 있다면 현재 칸의 생명은 외로워서 죽는다.
-        // 3.과밀 : 만약 현재 칸에 생명이 있고, 주위에 b개 초과의 생명이 있다면 현재 칸의 생명은 과밀로 죽는다.
-        if( hasLife(r,c) && ( Nearby<a || Nearby>b ) ){
-            qr.add(r);
-            qc.add(c);
-            ql.add(".");
+                if(c-RANGE-1 >= 0){
+                    CumulativeSum_Row[r][c] -= (Map[r][c-RANGE-1] ? 1 : 0);
+                }
+            }
         }
-        // 4.탄생 : 만약 현재 칸에 생명이 없고, 주위에 a개 초과 b개 이하의 생명이 있다면 다음 단계에서 현재 칸에 생명이 생긴다.
-        else if( !hasLife(r,c) && ( Nearby>a && Nearby<=b ) ){
-            qr.add(r);
-            qc.add(c);
-            ql.add("*");
-        }
-    }
-    public static void Apply(){
-        while(!qr.isEmpty()){
-            int r = qr.poll();
-            int c = qc.poll();
-            Map[r][c] = ql.poll().charAt(0);
-            //System.out.println(r+""+c);
-            for(int i=r-K; i<=r+K; i++){
-                if(i>=0 && i<N){
-                    for(int j=c-K; j<=c+K; j++){
-                        if(j>=0 && j<M) {
-                            canChange[i][j] = true;
-                        }
-                    }
+
+        CumulativeSum = new int[R][C];
+        for(int c=0; c<C; c++){
+            for(int r=0; r<=RANGE; r++){
+                if(r>=R) continue;
+                CumulativeSum[0][c] += CumulativeSum_Row[r][c];
+            }
+            for(int r=1; r<R; r++){
+                CumulativeSum[r][c] = CumulativeSum[r-1][c];
+                if(r+RANGE < R) {
+                    CumulativeSum[r][c] += CumulativeSum_Row[r+RANGE][c];
+                }
+                if(r-RANGE-1 >= 0){
+                    CumulativeSum[r][c] -= CumulativeSum_Row[r-RANGE-1][c];
                 }
             }
         }
     }
-    public static Queue<Integer> qr = new ArrayDeque<>();   // r값을 저장하는 큐
-    public static Queue<Integer> qc = new ArrayDeque<>();   // c값을 저장하는 큐
-    public static Queue<String> ql = new ArrayDeque<>();   // Map[r][c]값을 저장하는 큐
-    public static void Print(){
-        //System.out.println();
-        for(int r=0; r<N; r++){
-            for(int c=0; c<M; c++){
-                System.out.print(Map[r][c]);
+    static Queue<Integer> ChangeQ = new ArrayDeque<>();
+    public static void Observe(){
+        for(int r=0; r<R; r++){
+            for(int c=0; c<C; c++){
+                if(isGonnaDead(r,c) || isGonnaBorn(r,c)){
+                    ChangeQ.add(r);
+                    ChangeQ.add(c);
+                }
             }
-            System.out.println();
         }
     }
-    public static void PrintBool(){
-        //System.out.println();
-        for(int r=0; r<N; r++){
-            for(int c=0; c<M; c++){
-                System.out.print(canChange[r][c]?'T':'-');
-            }
-            System.out.println();
+    public static boolean isGonnaDead(int r, int c){
+        return Map[r][c] && (CumulativeSum[r][c]-1<A || CumulativeSum[r][c]-1>B);
+    }
+    public static boolean isGonnaBorn(int r, int c){
+        return !Map[r][c] && CumulativeSum[r][c]>A && CumulativeSum[r][c]<=B;
+    }
+    public static void ApplyChange(){
+        while(!ChangeQ.isEmpty()){
+            int r = ChangeQ.poll();
+            int c = ChangeQ.poll();
+            Map[r][c] = !Map[r][c];
         }
+    }
+    public static void Print(boolean[][] Arr){
+        StringBuilder sb = new StringBuilder();
+        for(int r=0; r<R; r++){
+            for(int c=0; c<C; c++){
+                sb.append(Arr[r][c]?'*':'.');
+            }
+            sb.append('\n');
+        }
+        System.out.print(sb);
+    }
+    public static void Print(int[][] Arr){
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n\n");
+        for(int r=0; r<R; r++){
+            for(int c=0; c<C; c++){
+                sb.append(Arr[r][c]+" ");
+            }
+            sb.append('\n');
+        }
+        System.out.print(sb);
     }
 }
