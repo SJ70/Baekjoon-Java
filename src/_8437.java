@@ -1,13 +1,15 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 
 public class _8437 {
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int Apple = Integer.parseInt(br.readLine());
-        int Diff = Integer.parseInt(br.readLine());
-        int cnt = (Apple-Diff)/2;
-        System.out.printf("%d\n%d",Apple-cnt,cnt);
+        BigInteger Apple = new BigInteger(br.readLine());
+        BigInteger Diff = new BigInteger(br.readLine());
+        BigInteger A = Apple.subtract(Diff).divide(new BigInteger("2"));
+        BigInteger B = Apple.subtract(A);
+        System.out.printf("%d\n%d",B,A);
     }
 }
