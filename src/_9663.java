@@ -7,7 +7,7 @@ public class _9663 {
     public static void main(String[] args){
         N = new Scanner(System.in).nextInt();
         Map = new boolean[N][N];
-        BF(0,0,0);
+        BT(0,0,0);
         System.out.println(Able);
     }
     public static void test_print(){
@@ -19,20 +19,20 @@ public class _9663 {
         }
         System.out.println();
     }
-    public static void BF(int r, int c, int cnt){
+    public static void BT(int r, int c, int cnt){
         if(r<N){
             //System.out.println(r+" "+c);
             if(isAble(r,c)){   // 놓을 수 있다면
                 Map[r][c] = true;   // 놓고 다음 줄로 (한 줄 당 놓을 수 있는 퀸은 1개)
-                //test_print();
+                test_print();
                 if(cnt+1==N){ // N개 다 놓은 경우
                     //test_print();
                     Able++;
                 }
-                else BF(r+1,0,cnt+1);
+                else BT(r+1,0,cnt+1);
                 Map[r][c] = false;
             }
-            if(c+1<N) BF(r,c+1,cnt);    // 놓지 않고 다음 칸으로
+            if(c+1<N) BT(r,c+1,cnt);    // 놓지 않고 다음 칸으로
             //else BF(r+1,0,cnt);   // 놓지 않고 다음 줄로 넘어가는 경우는 답이 없음
         }
     }
