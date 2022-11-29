@@ -9,16 +9,17 @@ public class _25209 {
     static char[][] LargeMap;
     static char[][] Map;
     static boolean[][] visited;
+    public static class WrongCase extends Throwable { }
     public static void main(String[] args) throws IOException{
         init();
-        printMap();
+//        printMap();
         try{
             for(int r=0; r<R; r++)
                 for(int c=0; c<C; c++)
                     if(!visited[r][c])
                         visit(r,c);
         }
-        catch(Exception e){
+        catch(WrongCase e){
             System.out.println("NO");
             return;
         }
@@ -68,16 +69,25 @@ public class _25209 {
             System.out.println();
         }
     }
-    public static void visit(int r, int c) throws Exception{
+    public static void printVisited(){
+        for(int r=0; r<R; r++){
+            for(int c=0; c<C; c++){
+                System.out.print(visited[r][c]?" v":" .");
+            }
+            System.out.println();
+        }
+    }
+    public static void visit(int r, int c) throws WrongCase{
+//        System.out.printf("%d,%d\n",r,c);
         visited[r][c] = true;
 
         // 축과 평행한 직사각형
         switch(Map[r][c]){
             case'⬛': break;
-            case'◢': throw new Exception(); // 좌측상단부터 탐색하기에 나와선 안 되는 존재
-            case'◣': throw new Exception();
-            case'◥': throw new Exception();
-            case'◤': // 좌측상단부터 탐색하기에 width 초깃값 1
+            case'◢': // 좌측상단부터 탐색하기에 나와선 안 되는 존재
+            case'◣':
+            case'◥': throw new WrongCase();
+            case'◤': // 좌측상단부터 탐색하기에 초깃값 항상 동일
                 checkTiltedSquare(r,c,'◤',c+1,'◥');
                 break;
             case'.':
@@ -88,18 +98,18 @@ public class _25209 {
                 break;
         }
     }
-    public static void checkTriangleNearby(int r, int c, int n) throws Exception{
+    public static void checkTriangleNearby(int r, int c, int n) throws WrongCase{
         int cnt = 0;
         if(r-1>=0 && isTriangle(Map[r-1][c])) cnt++;
         if(r+1<R && isTriangle(Map[r+1][c]))  cnt++;
         if(c-1>=0 && isTriangle(Map[r][c-1])) cnt++;
         if(c+1<C && isTriangle(Map[r][c+1]))  cnt++;
-        if(cnt!=n) throw new Exception();
+        if(cnt!=n) throw new WrongCase();
     }
     public static boolean isTriangle(char c){
         return c=='◤' || c=='◢' || c=='◣' || c=='◥';
     }
-    public static void checkSquare(int r, int c) throws Exception{
+    public static void checkSquare(int r, int c) throws WrongCase{
         int width = 0;
         for(int j=c+1; j<C; j++){
             if(Map[r][j]!='.') break;
@@ -107,38 +117,52 @@ public class _25209 {
             visited[r][j] = true;
             width++;
         }
-        for(int i=r+1; i<R; i++){
+        int i;
+        for(i=r+1; i<R; i++){
             if(Map[i][c]!='.') break;
 
             for(int j=c; j<=c+width; j++){
                 visited[i][j] = true;
-                if(Map[i][j]!='.') throw new Exception();
+                if(Map[i][j]!='.') throw new WrongCase();
+            }
+            // 좌변 우변 옆에 .이 있는 경우
+            if((c-1>=0 && Map[i][c-1]=='.') || (c+width+1<C && Map[i][c+width+1]=='.')) throw new WrongCase();
+        }
+        // 밑변 아래 .이 하나라도 있는 경우
+        if(i<R){
+            for(int j=c; j<=c+width; j++){
+                if(Map[i][j]=='.') throw new WrongCase();
             }
         }
     }
-    public static void checkTiltedSquare(int r, int c1, char char1, int c2, char char2) throws Exception{
-        System.out.printf("r:%d, %d:%c ~ %d:%c\n",r,c1,char1,c2,char2);
+    public static void checkTiltedSquare(int r, int c1, char char1, int c2, char char2) throws WrongCase{
+//        System.out.printf("r:%d, %d:%c ~ %d:%c\n",r,c1,char1,c2,char2);
         if(c1>=0 && Map[r][c1]==char1) visited[r][c1] = true;
-        else throw new Exception();
+        else throw new WrongCase();
 
         if(c2<C && Map[r][c2]==char2) visited[r][c2] = true;
-        else throw new Exception();
+        else throw new WrongCase();
 
         for(int i=c1+1; i<=c2-1; i++){
             if(i<C && Map[r][i]=='.') visited[r][i] = true;
-            else throw new Exception();
+            else throw new WrongCase();
         }
 
-        // leftExpanding / rightExpanding
+        // leftExpanding 좌측:확장? / rightExpanding 우측:확장?
         boolean L_Exp = (char1=='◤');
         boolean R_Exp = (char2=='◥');
+
+        // 양쪽 다 수축 중이고 c1과 c2가 1 차이라면 끝 (다음을 탐색하지 않음)
+        if(!L_Exp && !R_Exp && c2-c1==1) return;
+
+        if(r+1>=R) throw new WrongCase();
+
         // 확장/축소 초깃값 : 현재 상황
         int  Next_c1    = L_Exp ? c1-1 : c1+1;
         char Next_char1 = L_Exp ? '◤' : '◣';
         int  Next_c2    = R_Exp ? c2+1 : c2-1;
         char Next_char2 = R_Exp ? '◥' : '◢';
         // 확장 중일 경우 축소를 확인
-        if(r+1>=R) throw new Exception();
         if(L_Exp && Map[r+1][c1]=='◣'){
             Next_char1 = '◣';
             Next_c1 = c1;
@@ -147,9 +171,6 @@ public class _25209 {
             Next_char2 = '◢';
             Next_c2 = c2;
         }
-
-        // 양쪽 다 수축 중이고 c1과 c2가 1 차이라면 끝 (다음을 탐색하지 않음)
-        if(!L_Exp && !R_Exp && c2-c1==1) return;
 
         checkTiltedSquare(r+1, Next_c1, Next_char1, Next_c2, Next_char2);
     }
