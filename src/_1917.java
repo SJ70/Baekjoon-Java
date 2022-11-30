@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class _2642 {
+public class _1917 {
     static Scanner sc = new Scanner(System.in);
     static boolean[][] Map;
     static int R0,C0;
