@@ -10,7 +10,7 @@ public class _1357 {
         String X = st.nextToken();
         String Y = st.nextToken();
         String Sum = Reverse(String.valueOf( Integer.parseInt(Reverse(X)) + Integer.parseInt(Reverse(Y)) ));
-        System.out.println(Sum);
+        System.out.println(Integer.parseInt(Sum));
     }
     public static String Reverse(String str){
         StringBuilder sb = new StringBuilder();
