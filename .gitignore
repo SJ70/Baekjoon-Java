@@ -1,6 +1,6 @@
 out/
 .idea/
 #.idea_modules/
-#*.iml
+*.iml
 #*.ipr
 #*.iws
