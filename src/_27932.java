@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class _0C {
+public class _27932 {
     static int N, needToTired;
     static ArrayList<Integer> diff = new ArrayList<>();
     public static void main(String[] args) throws IOException{

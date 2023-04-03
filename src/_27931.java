@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class _0B {
+public class _27931 {
     static ArrayList<Integer>[] Num = new ArrayList[2]; //[홀,짝]
     public static void main(String[] args) throws IOException{
         init();

@@ -1,6 +1,6 @@
 import java.io.*;
 
-public class _0A {
+public class _27930 {
     static String KR = "KOREA";
     static String YS = "YONSEI";
     public static void main(String[] args) throws IOException{
