@@ -32,25 +32,20 @@ public class _1083 {
             }
         };
 
-        int pulledCnt = 0;
         for(int i=0; i<N && S>0; i++){
-//            System.out.printf("\n남은 S의 횟수: %d\n",S);
             PriorityQueue<int[]> num = new PriorityQueue<>(comp); // [숫자,인덱스]
-            for(int j=pulledCnt; j<N; j++){
+            for(int j=i; j<N; j++){
                 num.add(new int[]{Arr[j],j});
             }
 
             while(!num.isEmpty()){
                 int targetIndex = num.poll()[1];
-//                System.out.printf("target: %d, %d~%d\n", Arr[targetIndex], pulledCnt, targetIndex);
-                int swapCnt = targetIndex - pulledCnt;
+                int swapCnt = targetIndex - i;
                 if(S >= swapCnt){
                     if(swapCnt>0){
-                        pull(pulledCnt, targetIndex);
+                        pull(i, targetIndex);
                         S -= swapCnt;
                     }
-                    pulledCnt++;
-//                    print();
                     break;
                 }
             }
