@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.ArrayList;
 
-public class _0B {
+public class _28432 {
     static int N, M, QuestionIndex;
     static String[] Strings;
     static ArrayList<String> Answers = new ArrayList<>();

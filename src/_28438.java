@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class _0H {
+public class _28438 {
     static int R,C,Q;
     static int[] RowSum, ColumnSum;
     public static void main(String[] args) throws IOException {
