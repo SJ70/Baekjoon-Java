@@ -16,7 +16,7 @@ public class _1082 {
             switchNumberBigger();
             printMaxNumber();
         }
-        catch(Exception AnswerIsZero){
+        catch(AnswerIsZero e){
             System.out.println(0);
         }
     }
