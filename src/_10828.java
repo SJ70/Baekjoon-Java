@@ -3,7 +3,7 @@ import java.util.*;
 
 public class _10828 {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static class Stack{
+    private static class Stack{
         ArrayList<Integer> arr = new ArrayList<>();
 
         public void Command(String S){

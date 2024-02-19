@@ -2,7 +2,7 @@ import java.util.*;
 
 public class _10773 {
     static Scanner sc = new Scanner(System.in);
-    static class Stack{
+    private static class Stack{
         ArrayList<Integer> arr = new ArrayList<>();
         public void write(){
             int n = sc.nextInt();
