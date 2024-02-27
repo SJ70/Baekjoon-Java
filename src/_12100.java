@@ -5,7 +5,7 @@ public class _12100 {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static int N;
     static int Max = 0;
-    public static class Map{
+    private static class Map{
         int[][] map = new int[N][N];
         boolean changed = true;
         int cnt;
