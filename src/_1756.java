@@ -2,68 +2,65 @@ import java.io.*;
 import java.util.*;
 
 public class _1756 {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static int D,N;
-    static int[] Oven;
-    static boolean[] hasPizza;
+
     public static void main(String[] args) throws IOException {
-        InputOven();
-        //test_print();
-        InputPizza();
-        //test_print();
-        System.out.println(lastIndex);
+        input();
+        resizeOven();
+        System.out.println(getResult());
     }
-    public static void InputOven() throws IOException {
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        D = Integer.parseInt(st.nextToken());
-        N = Integer.parseInt(st.nextToken());
-        Oven = new int[D];
-        EndIndex = D-1;
-        st = new StringTokenizer(br.readLine());
-        Oven[0] = Integer.parseInt(st.nextToken());
-        for(int i=1; i<D; i++){
-            int tmp = Integer.parseInt(st.nextToken());
-            Oven[i] = Math.min(Oven[i-1],tmp);  // 중간이 위보다 넓어도 소용이 없음
+
+    static int OvenDepth, PizzaCnt;
+    static int[] Oven;
+    static StringTokenizer Pizza;
+
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    public static void input() throws IOException {
+        StringTokenizer st;
+
+        st= new StringTokenizer(br.readLine());
+        OvenDepth = Integer.parseInt(st.nextToken());
+        PizzaCnt = Integer.parseInt(st.nextToken());
+
+        Oven = new int[OvenDepth];
+        st= new StringTokenizer(br.readLine());
+        for(int i=0; i<OvenDepth; i++){
+            Oven[i] = Integer.parseInt(st.nextToken());
         }
+
+        Pizza = new StringTokenizer(br.readLine());
     }
-    static int EndIndex;
-    static int lastIndex;
-    public static void InputPizza() throws IOException {
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        for(int i=0; i<N; i++){
-            int pizza = Integer.parseInt(st.nextToken());
-            if( pizza > Oven[0] ){  // 입구에 안 들어가는 경우
-                lastIndex=0;
-                return;
-            }
-            lastIndex = BS(pizza,0,EndIndex);
+
+    public static void resizeOven(){
+        for(int i=1; i<OvenDepth; i++){
+            Oven[i] = Math.min(Oven[i], Oven[i-1]);
         }
+//        for(int i=0; i<OvenDepth; i++)
+//            System.out.printf("%3d",Oven[i]);
+//        System.out.println();
     }
-    public static int BS(int pizza, int left, int right){
-        int mid = (right+left)/2;
-        //System.out.printf("%d: %d~%d~%d\n",pizza,left,mid,right);
-        if( pizza<=Oven[mid] && ( mid+1==D || pizza>Oven[mid+1] ) ){
-            //System.out.println("stacked");
-            EndIndex = mid;
-            Oven[mid]=0;
-            return mid +1;
+
+    public static int getResult(){
+        int lastOvenFloor = OvenDepth;
+
+        for(int i=0; i<PizzaCnt; i++){
+            int pizza = Integer.parseInt(Pizza.nextToken());
+            lastOvenFloor = searchPlaceableDepth( pizza, 0, lastOvenFloor-1 );
+//            System.out.println(lastOvenFloor+'\n');
+            if(lastOvenFloor == -1) break;
         }
-        else if( pizza>Oven[mid] ){
-            //System.out.println("searchLeft");
-            return BS(pizza,left,mid);
-        }
-        else if( pizza<=Oven[mid+1] ){
-            //System.out.println("searchRight");
-            return BS(pizza,mid+1,right);
-        }
-        return 0;
+
+        return lastOvenFloor + 1;
     }
-    public static void test_print(){
-        System.out.println();
-        for(int i=0; i<D; i++){
-            for(int j=0; j<Oven[i]; j++)
-                System.out.print(".");
-            System.out.println("|");
-        }
+
+    public static int searchPlaceableDepth(int pizza, int high, int low){
+//        System.out.printf("%d -> %d~%d\n",pizza,high,low);
+        if( low<0 ) return -1;
+        if( pizza>Oven[high] ) return -1;
+        if( pizza<=Oven[low] ) return low;
+
+        int mid = (high+low)/2;
+        if( Oven[mid]>=pizza && Oven[mid+1]<pizza ) return mid;
+        else if( pizza > Oven[mid] ) return searchPlaceableDepth(pizza, high, mid-1);
+        else return searchPlaceableDepth(pizza, mid, low);
     }
 }
